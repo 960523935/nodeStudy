@@ -1,22 +1,17 @@
+const { router } = require('./router')
+const { middleware } = require('./middleware')
+const bodyParser = require('koa-bodyparser')
 const Koa = require('koa')
 const app = new Koa()
 
-app.use(async (ctx, next) => {
-  await next()
-  const rt = ctx.response.get('X-Response-Time')
-  console.log(`${ctx.method} ${ctx.url} - ${rt}`)
-})
+// 添加解析request的body的中间件，注意要在添加router之前添加此中间件
+app.use(bodyParser())
 
-app.use(async (ctx, next) => {
-  const start = Date.now()
-  await next()
-  const ms = Date.now() - start
-  ctx.set('X-Response-Time', `${ms}ms`)
-})
+// 添加中间件
+app.use(middleware)
 
-app.use(async (ctx) => {
-  ctx.body = 'hello world'
-})
+// 添加路由
+app.use(router.routes())
 
 app.listen(3000)
 

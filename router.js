@@ -1,0 +1,32 @@
+const router = require('koa-router')()
+
+router.get('/', async (ctx, next) => {
+  ctx.response.body = '<h1>this is Index</h1>'
+})
+
+router.get('/main(:name)', async (ctx, next) => {
+  const name = ctx.params.name
+  ctx.response.body = 'this is mainPage' + name
+})
+
+router.get('/login', async (ctx, next) => {
+  ctx.response.body = `<h1>LoginPage</h1>
+      <form action="/signin" method="post">
+          <p>Name: <input name="name" value="koa"></p>
+          <p>Password: <input name="password" type="password"></p>
+          <p><input type="submit" value="Submit"></p>
+      </form>`
+})
+
+router.post('/signin', async (ctx, next) => {
+  var name = ctx.request.body.name || '',
+    password = ctx.request.body.password || ''
+  console.log(`signin with name: ${name}, password: ${password}`)
+  if (name === 'koa' && password === '12345') {
+    ctx.response.body = `<h1>Welcome, ${name}!</h1>`
+  } else {
+    ctx.response.body = `<h1>Login failed!</h1>
+      <p><a href="/">Try again</a></p>`
+  }
+})
+exports.router = router
